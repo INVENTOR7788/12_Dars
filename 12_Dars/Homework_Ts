@@ -1,0 +1,207 @@
+// 1_prisma
+
+// generator client {
+//     provider = "prisma-client-js"
+//   }
+  
+//   datasource db {
+//     provider = "postgresql"
+//     url      = env("DATABASE_URL")
+//   }
+  
+//   model User {
+//     id        Int      @id @default(autoincrement())
+//     email     String   @unique
+//     password  String
+//     fullName  String
+//     role      Role     @default(STUDENT)
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+//     studentAnswers StudentAnswer[]
+//     TestSession    TestSession[]
+//   }
+  
+//   enum Role {
+//     ADMIN
+//     TEACHER
+//     STUDENT
+//   }
+  
+//   model Subject {
+//     id          Int       @id @default(autoincrement())
+//     name        String
+//     description String?
+//     createdAt   DateTime  @default(now())
+//     updatedAt   DateTime  @updatedAt
+//     topics      Topic[]
+//   }
+  
+//   model Topic {
+//     id          Int      @id @default(autoincrement())
+//     name        String
+//     description String?
+//     subjectId   Int
+//     createdAt   DateTime @default(now())
+//     updatedAt   DateTime @updatedAt
+//     subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+//     tests       Test[]
+//   }
+  
+//   model Test {
+//     id          Int       @id @default(autoincrement())
+//     title       String
+//     description String?
+//     topicId     Int
+//     difficulty  String    @default("MEDIUM")
+//     timeLimit   Int?
+//     createdAt   DateTime  @default(now())
+//     updatedAt   DateTime  @updatedAt
+//     topic       Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+//     questions   Question[]
+//     testSessions TestSession[]
+//   }
+  
+//   model Question {
+//     id          Int       @id @default(autoincrement())
+//     text        String
+//     testId      Int
+//     createdAt   DateTime  @default(now())
+//     updatedAt   DateTime  @updatedAt
+//     test        Test      @relation(fields: [testId], references: [id], onDelete: Cascade)
+//     options     Option[]
+//     studentAnswers StudentAnswer[]
+//   }
+  
+//   model Option {
+//     id          Int       @id @default(autoincrement())
+//     text        String
+//     isCorrect   Boolean   @default(false)
+//     questionId  Int
+//     createdAt   DateTime  @default(now())
+//     updatedAt   DateTime  @updatedAt
+//     question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+//     studentAnswers StudentAnswer[]
+//   }
+  
+//   model TestSession {
+//     id          Int       @id @default(autoincrement())
+//     userId      Int
+//     testId      Int
+//     startTime   DateTime  @default(now())
+//     endTime     DateTime?
+//     score       Float?
+//     status      String    @default("ACTIVE")
+//     user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//     test        Test      @relation(fields: [testId], references: [id], onDelete: Cascade)
+//     studentAnswers StudentAnswer[]
+//   }
+  
+//   model StudentAnswer {
+//     id            Int       @id @default(autoincrement())
+//     userId        Int
+//     questionId    Int
+//     optionId      Int?
+//     testSessionId Int
+//     createdAt     DateTime  @default(now())
+//     user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//     question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+//     option        Option?   @relation(fields: [optionId], references: [id], onDelete: SetNull)
+//     testSession   TestSession @relation(fields: [testSessionId], references: [id], onDelete: Cascade)
+//   }
+  
+
+// 2_Service
+
+// import { Injectable } from '@nestjs/common';
+// import { PrismaService } from '../prisma.service';
+
+// @Injectable()
+// export class SubjectsService {
+//   constructor(private prisma: PrismaService) {}
+
+//   async createSubject(data: CreateSubjectDto) {
+//     return this.prisma.subject.create({
+//       data,
+//     });
+//   }
+
+//   async findAll() {
+//     return this.prisma.subject.findMany();
+//   }
+
+//   async findOne(id: number) {
+//     return this.prisma.subject.findUnique({
+//       where: { id },
+//     });
+//   }
+
+//   async update(id: number, data: UpdateSubjectDto) {
+//     return this.prisma.subject.update({
+//       where: { id },
+//       data,
+//     });
+//   }
+
+//   async remove(id: number) {
+//     return this.prisma.subject.delete({
+//       where: { id },
+//     });
+//   }
+// }
+
+
+
+
+// 3_Subjects Controller
+
+// import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+// import { SubjectsService } from './subjects.service';
+// import { CreateSubjectDto, UpdateSubjectDto } from './dto';
+
+// @Controller('subjects')
+// export class SubjectsController {
+//   constructor(private readonly subjectsService: SubjectsService) {}
+
+//   @Post()
+//   create(@Body() createSubjectDto: CreateSubjectDto) {
+//     return this.subjectsService.createSubject(createSubjectDto);
+//   }
+
+//   @Get()
+//   findAll() {
+//     return this.subjectsService.findAll();
+//   }
+
+//   @Get(':id')
+//   findOne(@Param('id') id: string) {
+//     return this.subjectsService.findOne(+id);
+//   }
+
+//   @Patch(':id')
+//   update(@Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {
+//     return this.subjectsService.update(+id, updateSubjectDto);
+//   }
+
+//   @Delete(':id')
+//   remove(@Param('id') id: string) {
+//     return this.subjectsService.remove(+id);
+//   }
+// }
+
+
+
+// 4_DTO
+// export class CreateSubjectDto {
+//     @IsString()
+//     @IsNotEmpty()
+//     name: string;
+  
+//     @IsString()
+//     @IsOptional()
+//     description?: string;
+//   }
+  
+
+
+
+
